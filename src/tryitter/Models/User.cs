@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace tryitter.Models;
 public class User
 {
-    [Key]
+
     [Column("user_id")]
+    [Key]
     public int UserId { get; set; }
     public string Name { get; set; } = default!;
     public string Email { get; set; } = default!;
