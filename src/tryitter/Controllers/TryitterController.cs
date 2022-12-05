@@ -4,10 +4,10 @@ namespace tryitter.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class tryitterController : ControllerBase
+public class TryitterController : ControllerBase
 {
 
-    public tryitterController()
+    public TryitterController()
     {
 
     }

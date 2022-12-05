@@ -14,7 +14,7 @@ public class TryitterContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var connectionString = @"Server=127.0.0.1;Database=tryitter;User=SA;Password=senhaSuperSecreta.123;";
+            var connectionString = @"Server=127.0.0.1;Database=tryitter;User=SA;Password=senhaSuperSecreta.123;TrustServerCertificate=true;";
             optionsBuilder.UseSqlServer(connectionString);
         }
     }
