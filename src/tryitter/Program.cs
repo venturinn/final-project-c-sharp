@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<TryitterContext>();
-builder.Services.AddScoped<tryitterRepository>();
+builder.Services.AddScoped<TryitterRepository>();
 
 var app = builder.Build();
 
