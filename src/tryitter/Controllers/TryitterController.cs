@@ -44,3 +44,60 @@ public class UsersController : ControllerBase
         return Ok(new { message = $"Usuário {userId} removido com sucesso" });
     }
 }
+
+
+
+[Route("[controller]")]
+public class PostsController : ControllerBase
+{
+    private readonly TryitterRepository _repository;
+    public PostsController(TryitterRepository repository)
+    {
+        _repository = repository;
+    }
+
+    [HttpGet]
+    public ActionResult GetPosts()
+    {
+        return Ok(_repository.GetPosts());
+    }
+
+    [HttpGet("{postId}")]
+    public IActionResult GetPostById(int postId)
+    {
+        return Ok(_repository.GetPostById(postId));
+    }
+
+    [HttpPost]
+    public IActionResult AddPost([FromBody] PostDTO post)
+    {
+        var result = _repository.AddPost(post);
+
+        if (result == null)
+            return NotFound(new { message = $"Usuário {post.UserId} não existe!" });
+
+        return Created("", result);
+    }
+
+    [HttpPut("{postId}")]
+    public IActionResult UpdatePost([FromBody] Post post, int postId)
+    {
+        var result = _repository.UpdatePost(post, postId);
+
+        if (result == null)
+            return NotFound(new { message = $"Post {post.UserId} não existe!" });
+
+        return Ok(result);
+    }
+
+    [HttpDelete("{postId}")]
+    public IActionResult Delete(int postId)
+    {
+        var result = _repository.DeletePostById(postId);
+
+        if (result == null)
+            return NotFound(new { message = $"Post {postId} não existe!" });
+
+        return Ok(new { message = $"Post {postId} removido com sucesso" });
+    }
+}

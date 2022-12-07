@@ -13,5 +13,12 @@ public class Post
     [Column("user_id")]
     [ForeignKey("UserId")]
     public int UserId { get; set; }
-    public virtual User User { get; set; } = default!;
+    public virtual User? User { get; set; } = default!;
+}
+
+public class PostDTO
+{
+    public int PostId { get; set; }
+    public string Content { get; set; } = default!;
+    public int UserId { get; set; }
 }

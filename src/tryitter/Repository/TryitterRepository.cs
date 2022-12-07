@@ -27,7 +27,6 @@ namespace tryitter.Repository
 
         public UserDTO? GetUserById(int userId)
         {
-
             var user = _context.Users.Where(user => user.UserId == userId)
             .Select(x => new UserDTO
             {
@@ -76,6 +75,78 @@ namespace tryitter.Repository
                 _context.SaveChanges();
             }
             return userFound;
+        }
+
+        public IEnumerable<PostDTO> GetPosts()
+        {
+            var posts = _context.Posts
+                .Select(x => new PostDTO
+                {
+                    PostId = x.PostId,
+                    Content = x.Content,
+                    UserId = x.UserId,
+                }).ToList();
+
+            return posts;
+        }
+
+        public PostDTO? GetPostById(int postId)
+        {
+            var post = _context.Posts.Where(post => post.PostId == postId)
+                .Select(x => new PostDTO
+                {
+                    PostId = x.PostId,
+                    Content = x.Content,
+                    UserId = x.UserId,
+                }).FirstOrDefault();
+
+            return post;
+        }
+
+        public PostDTO? AddPost(PostDTO post) // Utilizado PostDTO para não gerar loop infinito 
+        {
+            var userFound = _context.Users.Find(post.UserId);
+            if (userFound != null)
+            {
+                var newPost = new Post { Content = post.Content, UserId = post.UserId };
+                _context.Posts.Add(newPost);
+                _context.SaveChanges();
+            }
+            else
+            {
+                return null;
+            }
+
+            return post;
+        }
+
+        public PostDTO? UpdatePost(Post post, int postId)
+        {
+            var postFound = _context.Posts.Find(postId);
+            if (postFound != null)
+            {
+                postFound.Content = post.Content;
+                _context.SaveChanges();
+
+            }
+            else
+            {
+                return null;
+            }
+
+            return GetPostById(postId);
+        }
+
+        public Post? DeletePostById(int postId)
+        {
+            var postFound = _context.Posts.Find(postId);
+
+            if (postFound != null)
+            {
+                _context.Posts.Remove(postFound);
+                _context.SaveChanges();
+            }
+            return postFound;
         }
     }
 }

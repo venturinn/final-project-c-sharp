@@ -26,9 +26,6 @@ public class UserDTO
 }
 
 
-
-
-
 /* 
     {
        "Name":"Diego Venturin",
@@ -36,4 +33,26 @@ public class UserDTO
        "Module": "CS",
        "Status": "completo",
        "Password": "senha"
-    } */
+    } 
+
+    {
+       "Content":"Bi89898",
+       "UserId": 3
+    }
+
+    */
+
+
+//     var userFound = _context.Users.Find(post.UserId);
+// if (userFound != null)
+// {
+//     _context.Posts.Add(post);
+//     _context.SaveChanges();
+// }
+// else
+// {
+//     return null;
+// }
+
+
+// return post;
