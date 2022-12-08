@@ -148,5 +148,19 @@ namespace tryitter.Repository
             }
             return postFound;
         }
+
+        // Requisito: Listar todos os posts de uma conta x
+        public IEnumerable<PostDTO> GetPostByUserId(int userId)
+        {
+            var post = _context.Posts.Where(post => post.UserId == userId)
+                .Select(x => new PostDTO
+                {
+                    PostId = x.PostId,
+                    Content = x.Content,
+                    UserId = x.UserId,
+                }).ToList();
+
+            return post;
+        }
     }
 }
