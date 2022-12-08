@@ -104,13 +104,25 @@ public class PostsController : ControllerBase
 
     // Requisito: Listar todos os posts de uma conta x
 
-    [HttpGet("user/{userId}")]
+    [HttpGet("user/{userId}/all")]
+    public IActionResult GetPostsByUserId(int userId)
+    {
+        var result = _repository.GetPostsByUserId(userId);
+
+        if (!result.Any()) return NotFound(new { message = $"O usuário {userId} não possuí posts!" });
+        return Ok(result);
+    }
+
+    // Requisito: Lista o último post de uma conta x
+
+    [HttpGet("user/{userId}/last")]
     public IActionResult GetPostByUserId(int userId)
     {
         var result = _repository.GetPostByUserId(userId);
 
-        if (!result.Any()) return NotFound(new { message = $"O usuário {userId} não possuí posts!" });
+        if (result == null) return NotFound(new { message = $"O usuário {userId} não possuí posts!" });
         return Ok(result);
-
     }
+
+
 }
