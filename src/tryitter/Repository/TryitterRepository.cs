@@ -167,7 +167,7 @@ namespace tryitter.Repository
         }
 
         // Requisito: Lista o último post de uma conta x
-        public PostDTO? GetPostByUserId(int userId)
+        public PostDTO? GetPostByUserId(int userId) // --> Refatorar esse método
         {
             var userFound = GetUserById(userId);
             var userPosts = GetPostsByUserId(userId);
@@ -182,6 +182,23 @@ namespace tryitter.Repository
                 }).OrderBy(x => x.PostId);
 
             return post.Last();
+        }
+
+
+        // Método usado para autenticação 
+        public UserDTO? GetUserByEmailAndPassword(UserLogin user)
+        {
+            var userFound = _context.Users.Where(x => x.Email == user.Email && x.Password == user.Password)
+            .Select(x => new UserDTO
+            {
+                UserId = x.UserId,
+                Name = x.Name,
+                Email = x.Email,
+                Module = x.Module,
+                Status = x.Status,
+            }).FirstOrDefault();
+
+            return userFound;
         }
     }
 }

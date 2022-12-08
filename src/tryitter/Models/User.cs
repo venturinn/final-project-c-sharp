@@ -25,6 +25,12 @@ public class UserDTO
     public string Status { get; set; } = default!;
 }
 
+public class UserLogin
+{
+    public string Email { get; set; } = default!;
+    public string Password { get; set; } = default!;
+}
+
 
 /* 
     {

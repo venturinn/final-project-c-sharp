@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using tryitter.Repository;
 using tryitter.Models;
+using tryitter.Services;
+
+
+
 namespace tryitter.Controllers;
 
 [ApiController]
@@ -109,7 +113,7 @@ public class PostsController : ControllerBase
     {
         var result = _repository.GetPostsByUserId(userId);
 
-        if (result == null) return NotFound(new { message = $"O usuário {userId} não existe!" });
+        if (result == null) return BadRequest(new { message = $"O usuário {userId} não existe!" });
         if (!result.Any()) return NotFound(new { message = $"O usuário {userId} não possuí posts!" });
         return Ok(result);
     }
@@ -125,4 +129,29 @@ public class PostsController : ControllerBase
 
         return Ok(result);
     }
+}
+
+
+[Route("[controller]")]
+public class LoginController : ControllerBase
+{
+    private readonly TryitterRepository _repository;
+    public LoginController(TryitterRepository repository)
+    {
+        _repository = repository;
+    }
+
+    [HttpPost]
+    public IActionResult Authenticate([FromBody] UserLogin user)
+    {
+        var result = _repository.GetUserByEmailAndPassword(user);
+
+        if (result == null)
+            return Unauthorized(new { message = $"Email ou senha incorretas!" });
+
+        var token = new TokenGenerator().Generate();
+
+        return Ok(new { token });
+    }
+
 }
