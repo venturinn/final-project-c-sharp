@@ -109,6 +109,7 @@ public class PostsController : ControllerBase
     {
         var result = _repository.GetPostsByUserId(userId);
 
+        if (result == null) return NotFound(new { message = $"O usuário {userId} não existe!" });
         if (!result.Any()) return NotFound(new { message = $"O usuário {userId} não possuí posts!" });
         return Ok(result);
     }
@@ -120,9 +121,8 @@ public class PostsController : ControllerBase
     {
         var result = _repository.GetPostByUserId(userId);
 
-        if (result == null) return NotFound(new { message = $"O usuário {userId} não possuí posts!" });
+        if (result == null) return NotFound(new { message = $"O usuário {userId} não existe ou não possuí posts" });
+
         return Ok(result);
     }
-
-
 }

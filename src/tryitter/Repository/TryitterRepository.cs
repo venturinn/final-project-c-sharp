@@ -150,8 +150,11 @@ namespace tryitter.Repository
         }
 
         // Requisito: Listar todos os posts de uma conta x
-        public IEnumerable<PostDTO> GetPostsByUserId(int userId)
+        public IEnumerable<PostDTO>? GetPostsByUserId(int userId)
         {
+            var userFound = GetUserById(userId);
+            if (userFound == null) return null;
+
             var post = _context.Posts.Where(post => post.UserId == userId)
                 .Select(x => new PostDTO
                 {
@@ -164,8 +167,12 @@ namespace tryitter.Repository
         }
 
         // Requisito: Lista o último post de uma conta x
-        public PostDTO GetPostByUserId(int userId)
+        public PostDTO? GetPostByUserId(int userId)
         {
+            var userFound = GetUserById(userId);
+            var userPosts = GetPostsByUserId(userId);
+            if (userFound == null || !userPosts.Any()) return null;
+
             var post = _context.Posts.Where(post => post.UserId == userId)
                 .Select(x => new PostDTO
                 {
