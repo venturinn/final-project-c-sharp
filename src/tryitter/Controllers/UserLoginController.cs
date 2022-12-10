@@ -57,4 +57,13 @@ public class UserLoginController : ControllerBase
         return Created("", result);
     }
 
+    // Altera os dados cadastrais da conta do usuário logado
+    [HttpPut]
+    public async Task<IActionResult> UpdateUser([FromBody] User user)
+    {
+        var token = await HttpContext.GetTokenAsync("access_token");
+        var userId = Int32.Parse(new TokenDecode().GetUserIdFromToken(token));
+        return Ok(_repository.UpdateUser(user, userId));
+    }
+
 }
