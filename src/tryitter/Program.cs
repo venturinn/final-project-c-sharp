@@ -18,6 +18,7 @@ builder.Services.AddEndpointsApiExplorer();
 // REF.: https://stackoverflow.com/questions/43447688/setting-up-swagger-asp-net-core-using-the-authorization-headers-bearer
 builder.Services.AddSwaggerGen(setup =>
 {
+    setup.UseInlineDefinitionsForEnums();
     var jwtSecurityScheme = new OpenApiSecurityScheme
     {
         BearerFormat = "JWT",

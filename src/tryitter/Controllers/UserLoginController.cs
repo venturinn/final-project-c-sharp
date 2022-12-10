@@ -66,4 +66,16 @@ public class UserLoginController : ControllerBase
         return Ok(_repository.UpdateUser(user, userId));
     }
 
+    // Pesquisa os posts de outras contas 
+    [HttpGet("{userName}/{allOrLast}")]
+    public IActionResult GetPostOrPostsByUserName(string userName, string allOrLast)
+    {
+        var result = _repository.GetPostOrPostsByUserName(userName, allOrLast);
+
+        if (result == null) return NotFound(new { message = $"O usuário {userName} não existe." });
+
+        return Ok(result);
+    }
 }
+
+

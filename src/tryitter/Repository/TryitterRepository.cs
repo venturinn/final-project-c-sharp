@@ -200,5 +200,29 @@ namespace tryitter.Repository
 
             return userFound;
         }
+
+        // Requisito: "...pesquisar outras contas por nome e optar por listar todos seus posts ou apenas o último."
+        public IEnumerable<PostDTO>? GetPostOrPostsByUserName(string userName, string allOrLast)
+        {
+
+            var userFound = _context.Users.Where(user => user.Name == userName);
+
+            if (!userFound.Any()) return null;
+
+            var postsFound = _context.Posts.Where(post => post.UserId == userFound.First().UserId)
+                .Select(x => new PostDTO
+                {
+                    PostId = x.PostId,
+                    Content = x.Content,
+                    UserId = x.UserId,
+                }).OrderBy(x => x.PostId);
+
+
+            if (allOrLast == "all") return postsFound;
+
+            List<PostDTO> post = new List<PostDTO>() { postsFound.Last() };
+
+            return post;
+        }
     }
 }
