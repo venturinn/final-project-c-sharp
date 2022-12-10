@@ -1,9 +1,8 @@
 using tryitter.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace tryitter.Repository
 {
-    public class TryitterRepository
+    public class TryitterRepository : ITryitterRepository
     {
         protected readonly TryitterContext _context;
         public TryitterRepository(TryitterContext context)

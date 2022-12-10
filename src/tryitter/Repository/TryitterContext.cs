@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using tryitter.Models;
-// using Microsoft.Extensions.DependencyInjection;
 
 namespace tryitter.Repository;
 
-public class TryitterContext : DbContext
+public class TryitterContext : DbContext, ITryitterContext
 {
     public TryitterContext(DbContextOptions<TryitterContext> options) : base(options) { }
     public DbSet<Post> Posts { get; set; } = null!;

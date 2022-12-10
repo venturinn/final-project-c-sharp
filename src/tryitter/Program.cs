@@ -46,7 +46,8 @@ builder.Services.AddSwaggerGen(setup =>
 
 
 builder.Services.AddDbContext<TryitterContext>();
-builder.Services.AddScoped<TryitterRepository>();
+builder.Services.AddScoped<ITryitterContext, TryitterContext>();
+builder.Services.AddScoped<ITryitterRepository, TryitterRepository>();
 
 
 builder.Services.AddAuthentication(options =>
