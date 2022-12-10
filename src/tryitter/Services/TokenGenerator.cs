@@ -28,16 +28,18 @@ namespace tryitter.Services
             return tokenHandler.WriteToken(token);
         }
 
-        private ClaimsIdentity AddClaims(UserDTO user)
+        static ClaimsIdentity AddClaims(UserDTO user)
         {
             var claims = new ClaimsIdentity();
 
-            claims.AddClaim(new Claim("Adm", user.Email.ToString()));
-
-            // if (client.IsCompany)
-            //     claims.AddClaim(new Claim("IsCompany", ClientTypeEnum.PessoaJuridica.ToString()));
-            // else
-            //     claims.AddClaim(new Claim("IsCompany", ClientTypeEnum.PessoaFisica.ToString()));
+            if (user.Email == "adm@email.com")
+            {
+                claims.AddClaim(new Claim("AdmLogin", user.Email.ToString()));
+            }
+            else
+            {
+                claims.AddClaim(new Claim("UserLogin", user.UserId.ToString()));
+            }
 
             return claims;
         }

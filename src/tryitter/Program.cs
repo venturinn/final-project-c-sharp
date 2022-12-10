@@ -12,13 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
 
 
-
+// Configuração para usar o token JWT com a interface do Swagger:
+// REF.: https://stackoverflow.com/questions/43447688/setting-up-swagger-asp-net-core-using-the-authorization-headers-bearer
 builder.Services.AddSwaggerGen(setup =>
 {
-    // Include 'SecurityScheme' to use JWT Authentication
     var jwtSecurityScheme = new OpenApiSecurityScheme
     {
         BearerFormat = "JWT",
@@ -45,11 +44,9 @@ builder.Services.AddSwaggerGen(setup =>
 });
 
 
-
-
-
 builder.Services.AddDbContext<TryitterContext>();
 builder.Services.AddScoped<TryitterRepository>();
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -71,10 +68,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Adm", policy =>
-    {
-        policy.RequireClaim("Adm", "string");
-    });
+    options.AddPolicy("AdmLogin", policy => policy.RequireClaim("AdmLogin"));
+    options.AddPolicy("UserLogin", policy => policy.RequireClaim("UserLogin"));
 });
 
 
@@ -92,6 +87,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.UseHttpsRedirection();
 
