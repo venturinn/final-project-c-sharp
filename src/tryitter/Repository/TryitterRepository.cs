@@ -224,5 +224,17 @@ namespace tryitter.Repository
 
             return post;
         }
+
+        public User? GetUserByName(string userName)
+        {
+            var user = _context.Users.Where(user => user.Name == userName).FirstOrDefault();
+            return user;
+        }
+
+        public User? GetUserByEmail(string userEmail)
+        {
+            var user = _context.Users.Where(user => user.Email == userEmail).FirstOrDefault();
+            return user;
+        }
     }
 }

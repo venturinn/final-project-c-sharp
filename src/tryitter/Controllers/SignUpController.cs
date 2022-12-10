@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using tryitter.Repository;
 using tryitter.Models;
-using tryitter.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace tryitter.Controllers;
@@ -20,6 +19,12 @@ public class SignUpController : ControllerBase
     [HttpPost]
     public IActionResult AddUser([FromBody] User user)
     {
+        var userEmailAlreadyExists = _repository.GetUserByEmail(user.Email);
+        if (userEmailAlreadyExists != null) return BadRequest(new { message = $"O email {user.Email} já existe." });
+
+        var userNameAlreadyExists = _repository.GetUserByName(user.Name);
+        if (userNameAlreadyExists != null) return BadRequest(new { message = $"O nome {user.Name} já existe, escolha outro nome." });
+
         return Created("", _repository.AddUser(user));
     }
 

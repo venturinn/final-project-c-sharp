@@ -31,12 +31,24 @@ public class AdminUsersController : ControllerBase
     [HttpPost]
     public IActionResult AddUser([FromBody] User user)
     {
+        var userEmailAlreadyExists = _repository.GetUserByEmail(user.Email);
+        if (userEmailAlreadyExists != null) return BadRequest(new { message = $"O email {user.Email} já existe." });
+
+        var userNameAlreadyExists = _repository.GetUserByName(user.Name);
+        if (userNameAlreadyExists != null) return BadRequest(new { message = $"O nome {user.Name} já existe, escolha outro nome." });
+
         return Created("", _repository.AddUser(user));
     }
 
     [HttpPut("{userId}")]
     public IActionResult UpdateUser([FromBody] User user, int userId)
     {
+        var userEmailAlreadyExists = _repository.GetUserByEmail(user.Email);
+        if (userEmailAlreadyExists != null) return BadRequest(new { message = $"O email {user.Email} já existe." });
+
+        var userNameAlreadyExists = _repository.GetUserByName(user.Name);
+        if (userNameAlreadyExists != null) return BadRequest(new { message = $"O nome {user.Name} já existe, escolha outro nome." });
+
         return Ok(_repository.UpdateUser(user, userId));
     }
 

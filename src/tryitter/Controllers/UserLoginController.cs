@@ -63,6 +63,13 @@ public class UserLoginController : ControllerBase
     {
         var token = await HttpContext.GetTokenAsync("access_token");
         var userId = Int32.Parse(new TokenDecode().GetUserIdFromToken(token));
+
+        var userEmailAlreadyExists = _repository.GetUserByEmail(user.Email);
+        if (userEmailAlreadyExists != null) return BadRequest(new { message = $"O email {user.Email} já existe." });
+
+        var userNameAlreadyExists = _repository.GetUserByName(user.Name);
+        if (userNameAlreadyExists != null) return BadRequest(new { message = $"O nome {user.Name} já existe, escolha outro nome." });
+
         return Ok(_repository.UpdateUser(user, userId));
     }
 
