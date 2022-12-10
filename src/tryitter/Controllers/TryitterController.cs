@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using tryitter.Repository;
 using tryitter.Models;
 using tryitter.Services;
-
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace tryitter.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize(Policy = "Adm")]
 public class UsersController : ControllerBase
 {
     private readonly TryitterRepository _repository;
@@ -48,8 +48,6 @@ public class UsersController : ControllerBase
         return Ok(new { message = $"Usuário {userId} removido com sucesso" });
     }
 }
-
-
 
 [Route("[controller]")]
 public class PostsController : ControllerBase
@@ -144,12 +142,12 @@ public class LoginController : ControllerBase
     [HttpPost]
     public IActionResult Authenticate([FromBody] UserLogin user)
     {
-        var result = _repository.GetUserByEmailAndPassword(user);
+        var userDTO = _repository.GetUserByEmailAndPassword(user);
 
-        if (result == null)
+        if (userDTO == null)
             return Unauthorized(new { message = $"Email ou senha incorretas!" });
 
-        var token = new TokenGenerator().Generate();
+        var token = new TokenGenerator().Generate(userDTO);
 
         return Ok(new { token });
     }
