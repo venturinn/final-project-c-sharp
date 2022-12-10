@@ -46,12 +46,12 @@ public class UserLoginController : ControllerBase
 
     // Publica um post na conta do usuário logado
     [HttpPost]
-    public async Task<IActionResult> AddPost([FromBody] string content)
+    public async Task<IActionResult> AddPost([FromBody] PostUser postUser)
     {
         var token = await HttpContext.GetTokenAsync("access_token");
         var userId = Int32.Parse(new TokenDecode().GetUserIdFromToken(token));
 
-        var post = new PostDTO { Content = content, UserId = userId };
+        var post = new PostDTO { Content = postUser.Content, UserId = userId };
         var result = _repository.AddPost(post);
 
         return Created("", result);

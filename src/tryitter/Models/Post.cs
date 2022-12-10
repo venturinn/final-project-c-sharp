@@ -8,6 +8,7 @@ public class Post
     [Column("post_id")]
     [Key]
     public int PostId { get; set; }
+    [MaxLength(5)]
     public string Content { get; set; } = default!;
 
     [Column("user_id")]
@@ -19,6 +20,14 @@ public class Post
 public class PostDTO
 {
     public int PostId { get; set; }
+    [MaxLength(5)]
     public string Content { get; set; } = default!;
     public int UserId { get; set; }
 }
+
+public class PostUser
+{
+    [MaxLength(3)]
+    public string Content { get; set; } = default!;
+}
+
