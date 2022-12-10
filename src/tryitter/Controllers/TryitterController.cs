@@ -179,9 +179,22 @@ public class UserController : ControllerBase
 
         var result = _repository.GetPostsByUserId(userId);
 
-        if (!result.Any()) return NotFound(new { message = $"Você ainda não possui posts!" });
+        if (!result.Any()) return NotFound(new { message = "Você ainda não possui posts!" });
         return Ok(result);
     }
 
+    // Lista o último post do usuário logado
+    [HttpGet("mylastpost")]
+    public async Task<IActionResult> GetLastPostByUserLogin()
+    {
+        var token = await HttpContext.GetTokenAsync("access_token");
+        var userId = Int32.Parse(new TokenDecode().GetUserIdFromToken(token));
+
+        var result = _repository.GetPostByUserId(userId);
+
+        if (result == null) return NotFound(new { message = "Você ainda não possui posts!" });
+
+        return Ok(result);
+    }
 
 }
