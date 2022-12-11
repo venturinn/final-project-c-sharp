@@ -10,7 +10,7 @@ namespace tryitter.Services
 {
     public class TokenGenerator
     {
-        public string Generate(UserDTO user)
+        public Token Generate(UserDTO user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -25,7 +25,10 @@ namespace tryitter.Services
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            var tokenGenerated = tokenHandler.WriteToken(token);
+            var tokenObject = new Token { TokenMessage = tokenGenerated };
+
+            return tokenObject;
         }
 
         static ClaimsIdentity AddClaims(UserDTO user)

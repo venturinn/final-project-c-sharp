@@ -27,7 +27,7 @@ public class SignInController : ControllerBase
 
         var token = new TokenGenerator().Generate(userDTO);
 
-        return Ok(new { token });
+        return Ok(token);
     }
 
 }
