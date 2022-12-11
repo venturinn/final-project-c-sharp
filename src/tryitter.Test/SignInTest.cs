@@ -11,8 +11,6 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Net.Http.Json;
 
-// dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
-
 namespace tryitter.Test;
 public class TryitterTest : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -60,20 +58,49 @@ public class TryitterTest : IClassFixture<WebApplicationFactory<Program>>
     }
 
 
-    [Theory(DisplayName = "POST /Sign Deve retornar um JWT token")]
-    [MemberData(nameof(userLogin))]
-    public async Task ShouldReturnAJWTToken(UserLogin validUser)
+    [Theory(DisplayName = "POST /Sign com um usuário válido deve retornar status Ok")]
+    [MemberData(nameof(rightUserLogin))]
+    public async Task ShouldReturnAJWTToken(UserLogin rightUserLogin)
     {
-        var json = JsonConvert.SerializeObject(validUser);
+        var json = JsonConvert.SerializeObject(rightUserLogin);
         StringContent content = new(json, Encoding.UTF8, "application/json");
 
         var response = await client.PostAsync("SignIn", content);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
-    public static readonly TheoryData<UserLogin> userLogin = new()
+
+    [Theory(DisplayName = "POST /Sign com um usuário com e-mail e senha inválidos deve retornar Unauthorized")]
+    [MemberData(nameof(wrongUserEmail))]
+    [MemberData(nameof(wrongUserPassword))]
+    public async Task ShouldReturnUnauthorized(UserLogin wrongUser)
+    {
+        var json = JsonConvert.SerializeObject(wrongUser);
+        StringContent content = new(json, Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync("SignIn", content);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    public static readonly TheoryData<UserLogin> rightUserLogin = new()
     {
             new UserLogin {
                 Email = "one@email.com",
+                Password = "one.123"
+            },
+    };
+
+    public static readonly TheoryData<UserLogin> wrongUserPassword = new()
+    {
+            new UserLogin {
+                Email = "one@email.com",
+                Password = "wrongPassword"
+            },
+    };
+
+    public static readonly TheoryData<UserLogin> wrongUserEmail = new()
+    {
+            new UserLogin {
+                Email = "wrongEmail",
                 Password = "one.123"
             },
     };

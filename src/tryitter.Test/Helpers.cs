@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using tryitter.Models;
 using tryitter.Repository;
 
+// dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+
 namespace tryitter.Test
 {
     public static class Helpers
