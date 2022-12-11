@@ -6,6 +6,7 @@ namespace tryitter.Repository;
 public class TryitterContext : DbContext, ITryitterContext
 {
     public TryitterContext(DbContextOptions<TryitterContext> options) : base(options) { }
+    public TryitterContext() { }
     public DbSet<Post> Posts { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
 
