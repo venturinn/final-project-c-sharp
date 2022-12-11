@@ -18,6 +18,14 @@ builder.Services.AddEndpointsApiExplorer();
 // REF.: https://stackoverflow.com/questions/43447688/setting-up-swagger-asp-net-core-using-the-authorization-headers-bearer
 builder.Services.AddSwaggerGen(setup =>
 {
+    setup.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Projeto Tryitter",
+        Description = "Desafio final da Acelaração 'C# - do zero ao deploy' - Trybe/XPInc",
+        Contact = new OpenApiContact() { Name = "Diego Venturin", Email = "diegoventurinn@gmail.com" }
+    });
+    
     setup.UseInlineDefinitionsForEnums();
     var jwtSecurityScheme = new OpenApiSecurityScheme
     {
