@@ -48,6 +48,8 @@ public class UserLoginController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddPost([FromBody] PostUser postUser)
     {
+        if (postUser.Content.Length > 300) return BadRequest(new { message = "Post excedeu 300 caracteres." });
+
         var token = await HttpContext.GetTokenAsync("access_token");
         var userId = Int32.Parse(new TokenDecode().GetUserIdFromToken(token));
 

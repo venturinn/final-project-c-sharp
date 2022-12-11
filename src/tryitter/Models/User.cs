@@ -30,35 +30,3 @@ public class UserLogin
     public string Email { get; set; } = default!;
     public string Password { get; set; } = default!;
 }
-
-
-/* 
-    {
-       "Name":"Diego Venturin",
-       "Email": "diego@email.com",
-       "Module": "CS",
-       "Status": "completo",
-       "Password": "senha"
-    } 
-
-    {
-       "Content":"Bi89898",
-       "UserId": 3
-    }
-
-    */
-
-
-//     var userFound = _context.Users.Find(post.UserId);
-// if (userFound != null)
-// {
-//     _context.Posts.Add(post);
-//     _context.SaveChanges();
-// }
-// else
-// {
-//     return null;
-// }
-
-
-// return post;

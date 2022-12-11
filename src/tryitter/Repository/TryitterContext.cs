@@ -13,9 +13,18 @@ public class TryitterContext : DbContext, ITryitterContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var connectionString = @"Server=127.0.0.1;Database=tryitter;User=SA;Password=senhaSuperSecreta.123;TrustServerCertificate=true;";
+            // Banco Local:
+            //var connectionString = @"Server=127.0.0.1;Database=tryitter;User=SA;Password=senhaSuperSecreta.123;TrustServerCertificate=true;";
+            var connectionString = @"Server=tcp:mysqlservertryitter.database.windows.net;Database=tryitter;User=tryitter;Password=trybe.123;Trusted_Connection=False;Encrypt=True;";
             optionsBuilder.UseSqlServer(connectionString);
         }
+
+        // BD Azure SQL Server - Alterar para variáveis de ambiente:
+        // Servidor: mysqlservertryitter
+        // Nome do banco: tryitter
+        // logon: tryitter
+        // Senha: trybe.123
+        // Server=tcp:mysqlservertryitter.database.windows.net,1433;Initial Catalog=tryitter;Persist Security Info=False;User ID=tryitter;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

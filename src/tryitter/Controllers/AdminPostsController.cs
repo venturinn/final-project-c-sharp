@@ -30,6 +30,8 @@ public class AdminPostsController : ControllerBase
     [HttpPost]
     public IActionResult AddPost([FromBody] PostDTO post)
     {
+        if (post.Content.Length > 300) return BadRequest(new { message = "Post excedeu 300 caracteres." });
+
         var result = _repository.AddPost(post);
 
         if (result == null)
