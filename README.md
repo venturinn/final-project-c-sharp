@@ -72,7 +72,7 @@ Importante: várias melhorias e possibilidades de refatorações já foram mapea
 
   ### Cadastro de um novo usuário:
 
-  > Para o cadastro de um novo usuário no sistema, o endpoint /SignUp deve ser usado. Será checado se o nome e o e-mail estão disponíveis e caso não estejam uma mensagem de erro será retornada. Essa rota não possui autenticação.
+  > Para o cadastro de um novo usuário no sistema, o endpoint /SignUp deve ser usado. Será checado se o nome e o e-mail estão disponíveis e caso não estejam uma mensagem de erro será retornada. Essa rota não possui autenticação. <strong>IMPORTANTE: O campo `userId` deve ser mantido em 0, pois se trata de uma chave primária e é atribuído automáticamente. Esse campo será removido em revisôes futuras.</strong>
 
    ![Cadastro](./public/_cadastro.png)
 
@@ -96,12 +96,6 @@ Importante: várias melhorias e possibilidades de refatorações já foram mapea
   
   <br/>
 </details>
-
-
-
-
-
-
 
 
 <br/>
