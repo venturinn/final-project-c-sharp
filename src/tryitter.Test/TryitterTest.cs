@@ -111,6 +111,7 @@ public class TryitterTest : IClassFixture<WebApplicationFactory<Program>>
 
 
     // Testa as rotas da UserLoginController
+    // Lista todos os posts do usuário logado
     [Theory(DisplayName = "GET /UserLogin/allmyposts deve retornar todos os posts do usuário logado")]
     [MemberData(nameof(UserLoginShouldReturnAllPostsEntries))]
     public async Task UserLoginShouldReturnAllPosts(UserLogin rightUserLogin, List<PostDTO> expectedPosts)
@@ -150,6 +151,7 @@ public class TryitterTest : IClassFixture<WebApplicationFactory<Program>>
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
+    // Lista o último post do usuário logado
     [Theory(DisplayName = "GET /UserLogin/mylastpost deve retornar o último post do usuário logado")]
     [MemberData(nameof(UserLoginShouldReturnLastPostEntries))]
     public async Task UserLoginShouldReturnLastPost(UserLogin rightUserLogin, PostDTO expectedPost)
@@ -170,6 +172,58 @@ public class TryitterTest : IClassFixture<WebApplicationFactory<Program>>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         post.Should().BeEquivalentTo(expectedPost);
     }
+
+    // Publica um post na conta do usuário logado
+    [Theory(DisplayName = "POST /UserLogin deve retornar status Created se o post tiver for <= 300 caracteres")]
+    [MemberData(nameof(UserLoginShouldReturnReturnCreatedEntries))]
+    public async Task UserLoginShouldReturnReturnCreated(UserLogin rightUserLogin, PostUser post)
+    {
+        // Realizando o login para receber JWT Token
+        var json = JsonConvert.SerializeObject(rightUserLogin);
+        StringContent content = new(json, Encoding.UTF8, "application/json");
+
+        var responseSignIn = await client.PostAsync("SignIn", content);
+        var token = await responseSignIn.Content.ReadFromJsonAsync<Token>();
+
+        // Requisição para o endpoint a ser testado
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenMessage);
+        var jsonPost = JsonConvert.SerializeObject(post);
+        StringContent contentPost = new(jsonPost, Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync("UserLogin", contentPost);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Theory(DisplayName = "POST /UserLogin deve retornar status BadRequest se o post tiver for > 300 caracteres")]
+    [MemberData(nameof(UserLoginShouldReturnReturnBadRequestEntries))]
+    public async Task UserLoginShouldReturnReturnBadRequest(UserLogin rightUserLogin, PostUser post)
+    {
+        // Realizando o login para receber JWT Token
+        var json = JsonConvert.SerializeObject(rightUserLogin);
+        StringContent content = new(json, Encoding.UTF8, "application/json");
+
+        var responseSignIn = await client.PostAsync("SignIn", content);
+        var token = await responseSignIn.Content.ReadFromJsonAsync<Token>();
+
+        // Requisição para o endpoint a ser testado
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenMessage);
+        var jsonPost = JsonConvert.SerializeObject(post);
+        StringContent contentPost = new(jsonPost, Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync("UserLogin", contentPost);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+
+
+
+
+
+
+
+
 
     public static readonly TheoryData<UserLogin> rightUserLogin = new()
     {
@@ -241,6 +295,22 @@ public class TryitterTest : IClassFixture<WebApplicationFactory<Program>>
         {
             new UserLogin { Email = "one@email.com",Password = "one.123"},
             new PostDTO { PostId = 3, Content = "Terceiro post do usuário 02", UserId = 2}
+        }
+    };
+
+    public static readonly TheoryData<UserLogin, PostUser> UserLoginShouldReturnReturnCreatedEntries = new()
+    {
+        {
+            new UserLogin { Email = "one@email.com",Password = "one.123"},
+            new PostUser { Content = "Quarto post do usuário 02" }
+        }
+    };
+
+    public static readonly TheoryData<UserLogin, PostUser> UserLoginShouldReturnReturnBadRequestEntries = new()
+    {
+        {
+            new UserLogin { Email = "one@email.com",Password = "one.123"},
+            new PostUser { Content = "Sed autem suscipit et quisquam rerum et dolore eaque ab perferendis quisquam qui ipsam soluta aut odio minima ad sequi voluptas. Sed quisquam quidem ad maiores tempore et atque pariatur qui autem sunt qui nihil quia aut fugiat quidem. Rem vero minima quo cupiditate magni est assumenda facilis in fugit nemo." }
         }
     };
 }
