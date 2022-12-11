@@ -1,5 +1,0 @@
-FROM mcr.microsoft.com/mssql/server:2022-latest
-ENV ACCEPT_EULA=Y
-ENV SA_PASSWORD=senhaSuperSecreta.123
-ENV MSSQL_TCP_PORT=1433
-ENV MSSQL_USER=SA
