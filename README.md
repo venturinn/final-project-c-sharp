@@ -1,6 +1,6 @@
 # Projeto Tryitter
 
-### Olá, esse é o repositório do meu projeto final da Acelaração 'C# - do zero ao deploy' - Trybe/XPInc. Seja bem-vind@!
+#### Olá, esse é o repositório do meu projeto final da Acelaração 'C# - do zero ao deploy' - Trybe/XPInc. Seja bem-vind@!
 
 Seguindo os requisitos propostos no desafio técnico, foi desenvolvida uma API utilizando o framework ASP.NET Core. Para o banco de dados foi utilizado um servidor SQL Server na Azure e a ORM utilizado foi o Entity Framework. Para os testes foram utilizados os frameworks xUnit e FluentAssertions. 
 
