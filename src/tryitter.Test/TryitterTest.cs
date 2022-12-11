@@ -8,6 +8,8 @@ using System.Net;
 using Newtonsoft.Json;
 using System.Text;
 using tryitter.Test;
+using tryitter.Services;
+using System.Net.Http.Headers;
 
 using System.Text.Json.Nodes;
 using System.Net.Http.Json;
@@ -58,7 +60,7 @@ public class TryitterTest : IClassFixture<WebApplicationFactory<Program>>
         }).CreateClient();
     }
 
-    // Testa as rotas da SignInController
+    // Testa a rota da SignInController
     [Theory(DisplayName = "POST /SignIn com um usuário válido deve retornar status Ok")]
     [MemberData(nameof(rightUserLogin))]
     public async Task SignInShouldReturnOk(UserLogin rightUserLogin)
@@ -80,6 +82,93 @@ public class TryitterTest : IClassFixture<WebApplicationFactory<Program>>
 
         var response = await client.PostAsync("SignIn", content);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+
+    // Testa a rota da SignUpController
+    [Theory(DisplayName = "POST /SignUp com um usuário válido deve retornar status Created")]
+    [MemberData(nameof(rightNewUser))]
+    public async Task SignUpShouldReturnCreated(User rightNewUser)
+    {
+        var json = JsonConvert.SerializeObject(rightNewUser);
+        StringContent content = new(json, Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync("SignUp", content);
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+    }
+
+    [Theory(DisplayName = "POST /SignUp com um usuário com e-mail ou nome já cadastrados deve retornar status BadRequest")]
+    [MemberData(nameof(repeatedUserName))]
+    [MemberData(nameof(repeatedUserEmail))]
+    public async Task SignUpShouldReturnBadRequest(User wrongUser)
+    {
+        var json = JsonConvert.SerializeObject(wrongUser);
+        StringContent content = new(json, Encoding.UTF8, "application/json");
+
+        var response = await client.PostAsync("SignUp", content);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+
+    // Testa as rotas da UserLoginController
+    [Theory(DisplayName = "GET /UserLogin/allmyposts deve retornar todos os posts do usuário logado")]
+    [MemberData(nameof(UserLoginShouldReturnAllPostsEntries))]
+    public async Task UserLoginShouldReturnAllPosts(UserLogin rightUserLogin, List<PostDTO> expectedPosts)
+    {
+        // Realizando o login para receber JWT Token
+        var json = JsonConvert.SerializeObject(rightUserLogin);
+        StringContent content = new(json, Encoding.UTF8, "application/json");
+
+        var responseSignIn = await client.PostAsync("SignIn", content);
+        var token = await responseSignIn.Content.ReadFromJsonAsync<Token>();
+
+        // Requisição para o endpoint a ser testado
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenMessage);
+        var response = await client.GetAsync("UserLogin/allmyposts");
+
+        var posts = await response.Content.ReadFromJsonAsync<List<PostDTO>>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        posts.Should().BeEquivalentTo(expectedPosts);
+    }
+
+    [Theory(DisplayName = "GET /UserLogin/allmyposts deve retornar NotFound quando o usuário não possuir posts")]
+    [MemberData(nameof(UserWithoutPosts))]
+    public async Task UserLoginShouldReturnNotFound(UserLogin rightUserLogin)
+    {
+        // Realizando o login para receber JWT Token
+        var json = JsonConvert.SerializeObject(rightUserLogin);
+        StringContent content = new(json, Encoding.UTF8, "application/json");
+
+        var responseSignIn = await client.PostAsync("SignIn", content);
+        var token = await responseSignIn.Content.ReadFromJsonAsync<Token>();
+
+        // Requisição para o endpoint a ser testado
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenMessage);
+        var response = await client.GetAsync("UserLogin/allmyposts");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Theory(DisplayName = "GET /UserLogin/mylastpost deve retornar o último post do usuário logado")]
+    [MemberData(nameof(UserLoginShouldReturnLastPostEntries))]
+    public async Task UserLoginShouldReturnLastPost(UserLogin rightUserLogin, PostDTO expectedPost)
+    {
+        // Realizando o login para receber JWT Token
+        var json = JsonConvert.SerializeObject(rightUserLogin);
+        StringContent content = new(json, Encoding.UTF8, "application/json");
+
+        var responseSignIn = await client.PostAsync("SignIn", content);
+        var token = await responseSignIn.Content.ReadFromJsonAsync<Token>();
+
+        // Requisição para o endpoint a ser testado
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.TokenMessage);
+        var response = await client.GetAsync("UserLogin/mylastpost");
+
+        var post = await response.Content.ReadFromJsonAsync<PostDTO>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        post.Should().BeEquivalentTo(expectedPost);
     }
 
     public static readonly TheoryData<UserLogin> rightUserLogin = new()
@@ -106,31 +195,6 @@ public class TryitterTest : IClassFixture<WebApplicationFactory<Program>>
             },
     };
 
-
-    // Testa as rotas da SignUpController
-    [Theory(DisplayName = "POST /SignUp com um usuário válido deve retornar status Created")]
-    [MemberData(nameof(rightNewUser))]
-    public async Task SignUpShouldReturnCreated(User rightNewUser)
-    {
-        var json = JsonConvert.SerializeObject(rightNewUser);
-        StringContent content = new(json, Encoding.UTF8, "application/json");
-
-        var response = await client.PostAsync("SignUp", content);
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
-    }
-
-    [Theory(DisplayName = "POST /SignUp com um usuário com e-mail ou nome já cadastrados deve retornar status BadRequest")]
-    [MemberData(nameof(repeatedUserName))]
-    [MemberData(nameof(repeatedUserEmail))]
-    public async Task SignUpShouldReturnBadRequest(User wrongUser)
-    {
-        var json = JsonConvert.SerializeObject(wrongUser);
-        StringContent content = new(json, Encoding.UTF8, "application/json");
-
-        var response = await client.PostAsync("SignUp", content);
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-    }
-
     public static readonly TheoryData<User> rightNewUser = new()
     {
             new User {
@@ -150,6 +214,34 @@ public class TryitterTest : IClassFixture<WebApplicationFactory<Program>>
     public static readonly TheoryData<User> repeatedUserEmail = new()
     {
       new User { Name = "User 10", Email = "one@email.com", Module = "Front-end", Status = "Concluído", Password = "one.123"}
+    };
+
+    public static readonly TheoryData<UserLogin, List<PostDTO>> UserLoginShouldReturnAllPostsEntries = new()
+    {
+        {
+            new UserLogin { Email = "one@email.com",Password = "one.123"},
+            new List<PostDTO>() {
+                new PostDTO { PostId = 1, Content = "Primeiro post do usuário 02", UserId = 2},
+                new PostDTO { PostId = 2, Content = "Segundo post do usuário 02", UserId = 2},
+                new PostDTO { PostId = 3, Content = "Terceiro post do usuário 02", UserId = 2},
+            }
+        }
+    };
+
+    public static readonly TheoryData<UserLogin> UserWithoutPosts = new()
+    {
+            new UserLogin {
+                Email = "three@email.com",
+                Password = "three.123"
+            },
+    };
+
+    public static readonly TheoryData<UserLogin, PostDTO> UserLoginShouldReturnLastPostEntries = new()
+    {
+        {
+            new UserLogin { Email = "one@email.com",Password = "one.123"},
+            new PostDTO { PostId = 3, Content = "Terceiro post do usuário 02", UserId = 2}
+        }
     };
 }
 

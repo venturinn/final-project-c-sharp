@@ -2,8 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using tryitter.Models;
 using tryitter.Repository;
 
-// dotnet test /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
-
 namespace tryitter.Test
 {
     public static class Helpers
@@ -31,17 +29,17 @@ namespace tryitter.Test
             new() {
                 new Post {
                     PostId = 1,
-                    Content = "Primeiro post do usuário 01",
+                    Content = "Primeiro post do usuário 02",
                     UserId = 2,
                 },
                   new Post {
                     PostId = 2,
-                    Content = "Segundo post do usuário 01",
+                    Content = "Segundo post do usuário 02",
                     UserId = 2,
                 },
                   new Post {
                     PostId = 3,
-                    Content = "Terceiro post do usuário 01",
+                    Content = "Terceiro post do usuário 02",
                     UserId = 2,
                 },
                 new Post {
@@ -60,7 +58,8 @@ namespace tryitter.Test
             new() {
                 new User { UserId  = 1, Name = "adm", Email = "adm@email.com", Module = "NA", Status = "NA", Password = "adm.123"},
                 new User { UserId  = 2, Name = "User 01", Email = "one@email.com", Module = "Front-end", Status = "Concluído", Password = "one.123"},
-                new User { UserId  = 3, Name = "User 02", Email = "two@email.com", Module = "Back-end", Status = "Cursando", Password = "two.123"}
+                new User { UserId  = 3, Name = "User 02", Email = "two@email.com", Module = "Back-end", Status = "Cursando", Password = "two.123"},
+                new User { UserId  = 4, Name = "User 03", Email = "three@email.com", Module = "Front-end", Status = "Cursando", Password = "three.123"}
             };
     }
 }
